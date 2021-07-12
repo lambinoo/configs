@@ -1,0 +1,10 @@
+[Unit]
+Description="Fix acpi bug that wakes up the system"
+
+[Service]
+Type=oneshot
+RemainAfterExit=yes
+ExecStart=/usr/local/lib/acpi_fix.sh
+
+[Install]
+WantedBy=multi-user.target
