@@ -12,7 +12,8 @@ set tabstop=4
 set expandtab
 let g:mapleader = "\<Space>"
 
-call plug#begin("~/.vim/plugged")    
+call plug#begin("~/.vim/plugged")
+    Plug 'danilo-augusto/vim-afterglow'
     Plug 'rust-lang/rust.vim'
     Plug 'cespare/vim-toml'
     Plug 'scrooloose/nerdtree', { 'on':  'NERDTreeToggle' }
@@ -27,55 +28,78 @@ call plug#begin("~/.vim/plugged")
 call plug#end()
 
 
-
 " Theme
-    set background=dark
-    colorscheme gruvbox
-    hi Normal guibg=NONE ctermbg=NONE
+let g:afterglow_italic_comments=1
+let g:afterglow_blackout=1
+colorscheme afterglow
+autocmd vimenter * hi Normal ctermbg=NONE
+autocmd vimenter * hi LineNr ctermbg=NONE
+autocmd vimenter * hi SignColumn ctermbg=NONE
+
 
 " NERDTree
-    let g:NERDTreeMinimalUI = 1
-    let g:NERDTreeAutoDeleteBuffer = 1
-    map <C-l> :NERDTreeToggle<CR>
-    autocmd BufRead,BufNewFile *.htm,*.html setlocal tabstop=2 shiftwidth=2 softtabstop=2
-    autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTree") && b:NERDTree.isTabTree()) | q | endif
+let g:NERDTreeMinimalUI = 1
+let g:NERDTreeAutoDeleteBuffer = 1
+map <C-l> :NERDTreeToggle<CR>
+autocmd BufRead,BufNewFile *.htm,*.html setlocal tabstop=2 shiftwidth=2 softtabstop=2
+autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTree") && b:NERDTree.isTabTree()) | q | endif
+
 
 " fzf
-    let $FZF_DEFAULT_COMMAND = 'ag -g ""'
-    let g:fzf_nvim_statusline = 0
-    let g:fzf_buffers_jump = 1
+let $FZF_DEFAULT_COMMAND = 'ag -g ""'
+let g:fzf_nvim_statusline = 0
+let g:fzf_buffers_jump = 1
+
 
 " coc
+autocmd CursorHold * silent call CocActionAsync('highlight')
+set statusline^=%{coc#status()}%{get(b:,'coc_current_function','')}
+
 function! s:check_back_space() abort
   let col = col('.') - 1
   return !col || getline('.')[col - 1]  =~# '\s'
 endfunction
 
-" neomake
-call neomake#configure#automake('w')
+function! s:show_documentation()
+  if (index(['vim','help'], &filetype) >= 0)
+    execute 'h '.expand('<cword>')
+  elseif (coc#rpc#ready())
+    call CocActionAsync('doHover')
+  else
+    execute '!' . &keywordprg . " " . expand('<cword>')
+  endif
+endfunction
 
 
 
 """ KEYBINDINGS
 " coc
 inoremap <silent><expr> <c-space> coc#refresh()
-inoremap <silent><expr> <TAB>
+nnoremap <silent> <leader>d :call <SID>show_documentation()<CR>
+nmap <silent><expr> <c-space> coc#refresh()
+nmap <silent><expr> <TAB>
         \ pumvisible() ? "\<C-n>" :
         \ <SID>check_back_space() ? "\<TAB>" :
         \ coc#refresh()
-inoremap <expr><S-TAB> pumvisible() ? "\<C-p>" : "\<C-h>"
-inoremap <silent><expr> <cr> pumvisible() ? coc#_select_confirm()
+nmap <expr><S-TAB> pumvisible() ? "\<C-p>" : "\<C-h>"
+nmap <silent><expr> <cr> pumvisible() ? coc#_select_confirm()
         \: "\<C-g>u\<CR>\<c-r>=coc#on_enter()\<CR>"
-
+nmap <silent> gd        <Plug>(coc-definition)
+nmap <silent> gy        <Plug>(coc-type-definition)
+nmap <silent> gi        <Plug>(coc-implementation)
+nmap <silent> gr        <Plug>(coc-references)
+nmap <leader>rn         <Plug>(coc-rename)
+nmap <silent><nowait> <space>`  :<C-u>CocList diagnostics<cr>
+nmap <silent><nowait> <space>s  :<C-u>CocList -I symbols<cr>
 
 " fzf
-nnoremap <silent> <leader><space> :Files<CR>
-nnoremap <silent> <leader>a       :Buffers<CR>
-nnoremap <silent> <leader>A       :Windows<CR>
-nnoremap <silent> <leader>cc      :Commits<CR>
-nnoremap <silent> <leader>cb      :BCommits<CR>
-nnoremap <silent> <leader>l       :Lines<CR>
-nnoremap <silent> <leader>/       :Ag<CR>
-nnoremap <silent> <leader>?       :History<CR>
-nnoremap <silent> <leader>ft      :Filetypes<CR>
+nmap <silent> <leader><space> :Files<CR>
+nmap <silent> <leader>a       :Buffers<CR>
+nmap <silent> <leader>A       :Windows<CR>
+nmap <silent> <leader>cc      :Commits<CR>
+nmap <silent> <leader>cb      :BCommits<CR>
+nmap <silent> <leader>l       :Lines<CR>
+nmap <silent> <leader>/       :Ag<CR>
+nmap <silent> <leader>?       :History<CR>
+nmap <silent> <leader>ft      :Filetypes<CR>
 
