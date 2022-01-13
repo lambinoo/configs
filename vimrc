@@ -27,7 +27,6 @@ call plug#begin("~/.vim/plugged")
     Plug 'vim-airline/vim-airline-themes'
 call plug#end()
 
-
 " Theme
 let g:afterglow_italic_comments=1
 let g:afterglow_blackout=1
@@ -73,6 +72,13 @@ endfunction
 
 
 """ KEYBINDINGS
+" nvim
+map <PageUp> <C-U><C-U>
+map <PageDown> <C-D><C-D>
+imap <PageUp> <C-O><C-U><C-O><C-U>
+imap <PageDown> <C-O><C-D><C-O><C-D>
+set nostartofline
+
 " coc
 inoremap <silent><expr> <c-space> coc#refresh()
 nnoremap <silent> <leader>d :call <SID>show_documentation()<CR>
@@ -99,7 +105,7 @@ nmap <silent> <leader>A       :Windows<CR>
 nmap <silent> <leader>cc      :Commits<CR>
 nmap <silent> <leader>cb      :BCommits<CR>
 nmap <silent> <leader>l       :Lines<CR>
-nmap <silent> <leader>/       :Ag<CR>
+nmap <silent> <leader>/       :Rg<CR>
 nmap <silent> <leader>?       :History<CR>
 nmap <silent> <leader>ft      :Filetypes<CR>
 
